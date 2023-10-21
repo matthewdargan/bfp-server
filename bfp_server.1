@@ -1,0 +1,25 @@
+.TH bfp_server 1 "October 10, 2023" "bfp_server" "bfp_server Manual"
+.SH NAME
+bfp_server \- Basic File Protocol Server
+.SH SYNOPSIS
+.B bfp_server
+.SH DESCRIPTION
+.B bfp_server
+serves Basic File Protocol (BFP) content to clients.
+
+BFP is a file-sharing protocol that enables users to host files on
+POSIX-compliant systems and access files on remote servers. BFP operates over
+TCP/IP, using port 8039 as the designated BFP port.
+
+Clients can request directories and files after connecting to a BFP server with
+a valid IP address and port. The server's responses are as follows:
+
+If an invalid directory or file path is requested, the server responds with a
+null character (NUL) to indicate the request's invalidity.
+
+If a valid directory is requested, the server responds with the directory
+information, including subdirectories and filenames, making it easy for clients
+to navigate and explore the available files.
+
+If a valid file path is requested, the server responds with the data of the
+requested file.

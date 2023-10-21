@@ -1,0 +1,6 @@
+#ifndef BFP_SERVER_VERSION_H
+#define BFP_SERVER_VERSION_H
+
+#define BFP_SERVER_VERSION_TXT "0.1"
+
+#endif
