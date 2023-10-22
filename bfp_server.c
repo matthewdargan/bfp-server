@@ -72,7 +72,7 @@ void handle_client(int client_fd)
 	close(client_fd);
 }
 
-int main()
+int main(void)
 {
 	struct sockaddr_in addr, clientaddr;
 	int client_fd, fd;
