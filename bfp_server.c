@@ -15,7 +15,59 @@
 #define MAX_CONNS 100
 #define MAX_BUFFER_SIZE 1024
 
-void handle_client(int);
+void handle_client(int client_fd)
+{
+	char buf[MAX_BUFFER_SIZE], clean_buf[MAX_BUFFER_SIZE],
+		out[MAX_BUFFER_SIZE];
+	DIR *dir;
+	struct dirent *dp;
+	struct stat st;
+	ssize_t nr, rcount;
+	int end, fd, start;
+	const char nul = '\0';
+
+	while ((rcount = read(client_fd, buf, sizeof(buf))) > 0) {
+		buf[rcount] = '\0';
+
+		// Trim leading and trailing whitespace
+		start = 0;
+		end = strlen(buf) - 1;
+		while (start <= end && isspace(buf[start]))
+			start++;
+		while (end >= start && isspace(buf[end]))
+			end--;
+
+		// If entire string is whitespace, skip it
+		if (start > end)
+			continue;
+		strncpy(clean_buf, buf + start, end - start + 1);
+		clean_buf[end - start + 1] = '\0';
+
+		// Send null character to indicate an invalid request
+		if (stat(clean_buf, &st) == -1) {
+			write(client_fd, &nul, 1);
+			continue;
+		}
+
+		if (S_ISDIR(st.st_mode)) {
+			if ((dir = opendir(clean_buf)) != NULL) {
+				// Send the contents of the specified directory
+				while ((dp = readdir(dir)) != NULL) {
+					snprintf(out, sizeof(out), "%s\n",
+						 dp->d_name);
+					write(client_fd, out, strlen(out));
+				}
+				closedir(dir);
+			}
+		} else if ((fd = open(clean_buf, O_RDONLY)) != -1) {
+			// Send the contents of the file
+			while ((nr = read(fd, out, sizeof(out))) > 0)
+				write(client_fd, out, nr);
+			close(fd);
+		}
+	}
+	close(client_fd);
+}
 
 int main()
 {
@@ -45,63 +97,4 @@ int main()
 	}
 	close(fd);
 	return 0;
-}
-
-void handle_client(int client_fd)
-{
-	char buf[MAX_BUFFER_SIZE], clean_buf[MAX_BUFFER_SIZE],
-		out[MAX_BUFFER_SIZE];
-	DIR *dir;
-	struct dirent *dp;
-	struct stat st;
-	ssize_t nr, rcount;
-	int end, fd, start;
-	const char nul = '\0';
-
-	while ((rcount = read(client_fd, buf, sizeof(buf))) > 0) {
-		buf[rcount] = '\0';
-
-		// Trim leading and trailing whitespace
-		start = 0;
-		end = strlen(buf) - 1;
-		while (start <= end && isspace(buf[start]))
-			start++;
-		while (end >= start && isspace(buf[end]))
-			end--;
-
-		// If entire string is whitespace, skip it
-		if (start > end)
-			continue;
-		strncpy(clean_buf, buf + start, end - start + 1);
-		clean_buf[end - start + 1] = '\0';
-
-		if (strncmp(clean_buf, "/", 1) == 0) {
-			if ((dir = opendir(".")) != NULL) {
-				while ((dp = readdir(dir)) != NULL) {
-					snprintf(out, sizeof(out), "%s\n",
-						 dp->d_name);
-					write(client_fd, out, strlen(out));
-				}
-				closedir(dir);
-			}
-		} else if (stat(clean_buf, &st) == 0) {
-			if (S_ISDIR(st.st_mode)) {
-				if ((dir = opendir(clean_buf)) != NULL) {
-					while ((dp = readdir(dir)) != NULL) {
-						snprintf(out, sizeof(out),
-							 "%s\n", dp->d_name);
-						write(client_fd, out,
-						      strlen(out));
-					}
-					closedir(dir);
-				}
-			} else if ((fd = open(clean_buf, O_RDONLY)) != -1) {
-				while ((nr = read(fd, out, sizeof(out))) > 0)
-					write(client_fd, out, nr);
-				close(fd);
-			}
-		} else
-			write(client_fd, &nul, 1);
-	}
-	close(client_fd);
 }

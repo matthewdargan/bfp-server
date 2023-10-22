@@ -12,10 +12,10 @@ INSTALL ?= install
 $(TARGET): $(OBJS)
 	$(CC) $(OBJS) -o $(TARGET)
 
-bfp_server.o: bfp_server.c version.h
+bfp_server.o: bfp_server.c
 
 .PHONY: install
-install:
+install: $(TARGET)
 	$(INSTALL) -d $(DESTDIR)$(BINDIR)
 	$(INSTALL) -m 0755 $(TARGET) $(DESTDIR)$(BINDIR)
 	$(INSTALL) -d $(DESTDIR)$(MANDIR)

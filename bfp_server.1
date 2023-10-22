@@ -7,19 +7,22 @@ bfp_server \- Basic File Protocol Server
 .B bfp_server
 serves Basic File Protocol (BFP) content to clients.
 
-BFP is a file-sharing protocol that enables users to host files on
-POSIX-compliant systems and access files on remote servers. BFP operates over
-TCP/IP, using port 8039 as the designated BFP port.
+BFP is a file-sharing protocol that enables users to host and access files on
+POSIX-compliant systems. It operates over TCP/IP, using port 8039 as the
+designated BFP port.
 
-Clients can request directories and files after connecting to a BFP server with
-a valid IP address and port. The server's responses are as follows:
+When a client connects to a BFP server with a valid IP address and port, the
+server responds according to the client's request:
 
-If an invalid directory or file path is requested, the server responds with a
-null character (NUL) to indicate the request's invalidity.
+.IP "1. Invalid Request:"
+When an invalid directory or file path is requested, the server responds with
+the null character (NUL) to indicate the request's invalidity.
 
-If a valid directory is requested, the server responds with the directory
-information, including subdirectories and filenames, making it easy for clients
-to navigate and explore the available files.
+.IP "2. Directory Listing:"
+When a valid directory is requested, the server responds with the directory
+information, including subdirectories and filenames, allowing clients to
+navigate and explore the available files within the specified directory.
 
-If a valid file path is requested, the server responds with the data of the
+.IP "3. File Transfer:"
+When a valid file path is requested, the server responds with the data of the
 requested file.
