@@ -1,3 +1,6 @@
+// Copyright (c) 2023, Matthew R. Muller, Matthew P. Dargan.
+// SPDX-License-Identifier: BSD-3-Clause
+
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/types.h>

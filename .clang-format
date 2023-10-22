@@ -1,3 +1,6 @@
+# Copyright (c) 2023, Matthew R. Muller, Matthew P. Dargan.
+# SPDX-License-Identifier: BSD-3-Clause
+#
 # clang-format configuration file. Intended for clang-format >= 11.
 #
 # For more information, see:

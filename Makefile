@@ -1,3 +1,6 @@
+# Copyright (c) 2023, Matthew R. Muller, Matthew P. Dargan.
+# SPDX-License-Identifier: BSD-3-Clause
+
 TARGET = bfp_server
 OBJS = bfp_server.o
 CFLAGS += -W -Wall -Wshadow -Werror -pedantic -g -std=c11
