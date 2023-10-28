@@ -16,12 +16,10 @@
 
 #define PORT 8039
 #define MAX_CONNS 100
-#define MAX_BUFFER_SIZE 1024
 
 void handle_client(int client_fd)
 {
-	char buf[MAX_BUFFER_SIZE], clean_buf[MAX_BUFFER_SIZE],
-		out[MAX_BUFFER_SIZE];
+	char buf[BUFSIZ], clean_buf[BUFSIZ], out[BUFSIZ];
 	DIR *dir;
 	struct dirent *dp;
 	struct stat st;
@@ -92,9 +90,8 @@ int main(void)
 		return 1;
 	}
 
-	while (1) {
-		client_fd = accept(fd, (struct sockaddr *)&clientaddr, &len);
-		if (client_fd == -1)
+	for (;;) {
+		if ((client_fd = accept(fd, (struct sockaddr *)&clientaddr, &len)) == -1)
 			continue;
 		handle_client(client_fd);
 	}
